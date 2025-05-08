@@ -1,0 +1,58 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    container_name: newsletter_web
+    command: /entrypoint.sh
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - db
+    environment:
+      - DEBUG=1
+      - DATABASE_NAME=newsletter
+      - DATABASE_USER=newsletter_user
+      - DATABASE_PASSWORD=newsletter_pass
+      - DATABASE_HOST=db
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=your_key
+      - AWS_SECRET_ACCESS_KEY=your_secret
+
+  worker:
+    build: .
+    container_name: newsletter_worker
+    command: celery -A newsletter_tool worker --loglevel=info
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+      - db
+    environment:
+      - DATABASE_NAME=newsletter
+      - DATABASE_USER=newsletter_user
+      - DATABASE_PASSWORD=newsletter_pass
+      - DATABASE_HOST=db
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=your_key
+      - AWS_SECRET_ACCESS_KEY=your_secret
+
+  redis:
+    image: redis:7-alpine
+    container_name: newsletter_redis
+
+  db:
+    image: postgres:14
+    container_name: newsletter_db
+    environment:
+      POSTGRES_DB: newsletter
+      POSTGRES_USER: newsletter_user
+      POSTGRES_PASSWORD: newsletter_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+
+volumes:
+  postgres_data:
