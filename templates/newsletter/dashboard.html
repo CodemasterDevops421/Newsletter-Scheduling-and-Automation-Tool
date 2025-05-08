@@ -1,0 +1,7 @@
+<h2>Scheduled Newsletters</h2>
+<a href="/create/">Create New</a>
+<ul>
+{% for newsletter in newsletters %}
+    <li><strong>{{ newsletter.subject }}</strong> - Scheduled: {{ newsletter.scheduled_time }} - Sent: {{ newsletter.sent }}</li>
+{% endfor %}
+</ul>

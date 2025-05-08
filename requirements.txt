@@ -1,0 +1,6 @@
+Django>=4.2
+celery>=5.2
+redis>=4.3
+boto3
+django-crispy-forms
+psycopg2-binary
